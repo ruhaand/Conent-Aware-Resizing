@@ -10,7 +10,10 @@
 // EFFECTS:  Initializes *mat as a Matrix with the given width and height.
 // NOTE:     Do NOT use new or delete here.
 void Matrix_init(Matrix* mat, int width, int height) {
-  assert(false); // TODO Replace with your implementation!
+  Matrix mat;
+  mat->width = width;
+  mat->height = height;
+  
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -22,26 +25,40 @@ void Matrix_init(Matrix* mat, int width, int height) {
 //           by a newline. This means there will be an "extra" space at
 //           the end of each line.
 void Matrix_print(const Matrix* mat, std::ostream& os) {
-  assert(false); // TODO Replace with your implementation!
+  os << mat->width << " " << mat->height;
+  for(int row = 0; row < mat->width; row++){
+    for(int col = 0; col < mat->height; col++){
+      os << Matrix_at(mat, row, col);
+    }
+    os << "/n";
+  }
+
 }
 
 // REQUIRES: mat points to an valid Matrix
 // EFFECTS:  Returns the width of the Matrix.
 int Matrix_width(const Matrix* mat) {
-  assert(false); // TODO Replace with your implementation!
+  return mat->width;
 }
 
 // REQUIRES: mat points to a valid Matrix
 // EFFECTS:  Returns the height of the Matrix.
 int Matrix_height(const Matrix* mat) {
-  assert(false); // TODO Replace with your implementation!
+  return mat->height;
 }
 
 // REQUIRES: mat points to a valid Matrix
 //           ptr points to an element in the Matrix
 // EFFECTS:  Returns the row of the element pointed to by ptr.
 int Matrix_row(const Matrix* mat, const int* ptr) {
-  assert(false); // TODO Replace with your implementation!
+  //ptr points to some element within data array
+
+  //value is the value that the pointer points to
+  int value = *ptr;
+  
+
+
+
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -60,7 +77,16 @@ int Matrix_column(const Matrix* mat, const int* ptr) {
 // EFFECTS:  Returns a pointer to the element in the Matrix
 //           at the given row and column.
 int* Matrix_at(Matrix* mat, int row, int column) {
-  assert(false); // TODO Replace with your implementation!
+  // assert(false); // TODO Replace with your implementation!
+  int index = 0;
+  int numRows = mat->height;
+  int numCols = mat->width;
+  
+  //math formula is row * numCols + column
+  index = (row * numCols) + column;
+  return mat->data+index;  
+
+  
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -70,7 +96,19 @@ int* Matrix_at(Matrix* mat, int row, int column) {
 // EFFECTS:  Returns a pointer-to-const to the element in
 //           the Matrix at the given row and column.
 const int* Matrix_at(const Matrix* mat, int row, int column) {
-  assert(false); // TODO Replace with your implementation!
+  assert(0 <= row && row < mat->height);
+  assert(0 <= column && column < mat->width);
+  // assert(false); // TODO Replace with your implementation!
+  int index = 0;
+  int numRows = mat->height;
+  int numCols = mat->width;
+  
+  //math formula is row * numCols + column
+  index = (row * numCols) + column;
+  return mat->data+index;
+
+
+
 }
 
 // REQUIRES: mat points to a valid Matrix
