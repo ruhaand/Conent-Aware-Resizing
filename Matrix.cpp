@@ -26,8 +26,8 @@ void Matrix_init(Matrix* mat, int width, int height) {
 //           the end of each line.
 void Matrix_print(const Matrix* mat, std::ostream& os) {
   os << mat->width << " " << mat->height;
-  for(int row = 0; row < mat->width; row++){
-    for(int col = 0; col < mat->height; col++){
+  for(int row = 0; row < mat->height; row++){
+    for(int col = 0; col < mat->width; col++){
       os << Matrix_at(mat, row, col);
     }
     os << "/n";
@@ -54,7 +54,13 @@ int Matrix_row(const Matrix* mat, const int* ptr) {
   //ptr points to some element within data array
 
   //value is the value that the pointer points to
-  int value = *ptr;
+  int index = ptr - mat->data;
+  int col = index % mat->width;
+  int row = (index - col) / mat->width;
+
+  return row;
+  
+
   
 
 
@@ -65,7 +71,13 @@ int Matrix_row(const Matrix* mat, const int* ptr) {
 //           ptr point to an element in the Matrix
 // EFFECTS:  Returns the column of the element pointed to by ptr.
 int Matrix_column(const Matrix* mat, const int* ptr) {
-  assert(false); // TODO Replace with your implementation!
+  //ptr points to some element within data array
+
+  //value is the value that the pointer points to
+  int index = ptr - mat->data;
+  int col = index - (Matrix_row(mat, ptr)*mat->width);
+
+  return col;
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -115,7 +127,11 @@ const int* Matrix_at(const Matrix* mat, int row, int column) {
 // MODIFIES: *mat
 // EFFECTS:  Sets each element of the Matrix to the given value.
 void Matrix_fill(Matrix* mat, int value) {
-  assert(false); // TODO Replace with your implementation!
+  for(int row = 0; row < mat->height; row++) {
+    for(int col = 0; col < mat->width; col++) {
+      *(Matrix_at(mat, row, col)) = value;
+    }
+  }
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -124,13 +140,26 @@ void Matrix_fill(Matrix* mat, int value) {
 //           the given value. These are all elements in the first/last
 //           row or the first/last column.
 void Matrix_fill_border(Matrix* mat, int value) {
-  assert(false); // TODO Replace with your implementation!
+  for(int row = 0; row < mat->height; row++) {
+    for(int col = 0; col < mat->width; col+=(mat->width) - 1) {
+      *(Matrix_at(mat, row, col)) = value;
+    }
+  }
 }
 
 // REQUIRES: mat points to a valid Matrix
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix* mat) {
-  assert(false); // TODO Replace with your implementation!
+  int max = *(Matrix_at(mat,0,0));
+  for(int row = 0; row < mat->height; row++) {
+    for(int col = 0; col < mat->width; col++) {
+        if(*Matrix_at(mat, row, col) > max){
+          max = *Matrix_at(mat, row, col);
+        }
+    }
+  }
+
+  return max;
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -145,7 +174,15 @@ int Matrix_max(const Matrix* mat) {
 //           the leftmost one.
 int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
                                       int column_start, int column_end) {
-  assert(false); // TODO Replace with your implementation!
+
+  int minValue = Matrix_min_value_in_row(mat, row, column_start, column_end);
+  //this will return the leftMost index of column--first instance
+  for(int index = column_start; index < column_end; index++){
+    if(*Matrix_at(mat,row, index) == minValue){
+      return index;
+    }
+  }
+
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -157,5 +194,16 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
 //           column_start (inclusive) and column_end (exclusive).
 int Matrix_min_value_in_row(const Matrix* mat, int row,
                             int column_start, int column_end) {
-  assert(false); // TODO Replace with your implementation!
+
+  int minValue = *Matrix_at(mat,row,column_start);
+
+  //this will get the absolute min value independent of index
+  for(int colIndex = column_start; colIndex < column_end; colIndex++){
+    if(*Matrix_at(mat,row, colIndex) < minValue){
+      minValue = *Matrix_at(mat,row, colIndex);
+    }
+  }
+
+  return minValue;
 }
+
