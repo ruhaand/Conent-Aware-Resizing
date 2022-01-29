@@ -10,7 +10,6 @@
 // EFFECTS:  Initializes *mat as a Matrix with the given width and height.
 // NOTE:     Do NOT use new or delete here.
 void Matrix_init(Matrix* mat, int width, int height) {
-  Matrix mat;
   mat->width = width;
   mat->height = height;
   
@@ -91,7 +90,6 @@ int Matrix_column(const Matrix* mat, const int* ptr) {
 int* Matrix_at(Matrix* mat, int row, int column) {
   // assert(false); // TODO Replace with your implementation!
   int index = 0;
-  int numRows = mat->height;
   int numCols = mat->width;
   
   //math formula is row * numCols + column
@@ -112,7 +110,6 @@ const int* Matrix_at(const Matrix* mat, int row, int column) {
   assert(0 <= column && column < mat->width);
   // assert(false); // TODO Replace with your implementation!
   int index = 0;
-  int numRows = mat->height;
   int numCols = mat->width;
   
   //math formula is row * numCols + column
@@ -182,6 +179,8 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
       return index;
     }
   }
+
+  return minValue;
 
 }
 
