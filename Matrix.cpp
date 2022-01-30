@@ -24,12 +24,12 @@ void Matrix_init(Matrix* mat, int width, int height) {
 //           by a newline. This means there will be an "extra" space at
 //           the end of each line.
 void Matrix_print(const Matrix* mat, std::ostream& os) {
-  os << mat->width << " " << mat->height;
+  os << mat->width << " " << mat->height << std::endl;
   for(int row = 0; row < mat->height; row++){
     for(int col = 0; col < mat->width; col++){
-      os << Matrix_at(mat, row, col);
+      os << *Matrix_at(mat, row, col) << " ";
     }
-    os << "/n";
+    os << std::endl;
   }
 
 }
@@ -137,6 +137,14 @@ void Matrix_fill(Matrix* mat, int value) {
 //           the given value. These are all elements in the first/last
 //           row or the first/last column.
 void Matrix_fill_border(Matrix* mat, int value) {
+
+  //fill top and bottom rows
+  for(int row = 0; row < mat->height; row+=(mat->height - 1)){
+    for(int col = 0; col < mat->width; col++){
+      *(Matrix_at(mat, row, col)) = value;
+    }
+  }
+
   for(int row = 0; row < mat->height; row++) {
     for(int col = 0; col < mat->width; col+=(mat->width) - 1) {
       *(Matrix_at(mat, row, col)) = value;
@@ -171,7 +179,7 @@ int Matrix_max(const Matrix* mat) {
 //           the leftmost one.
 int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
                                       int column_start, int column_end) {
-
+                                        
   int minValue = Matrix_min_value_in_row(mat, row, column_start, column_end);
   //this will return the leftMost index of column--first instance
   for(int index = column_start; index < column_end; index++){
