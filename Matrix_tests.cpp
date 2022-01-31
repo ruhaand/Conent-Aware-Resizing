@@ -32,6 +32,43 @@ TEST(test_fill_basic) {
   delete mat; // delete the Matrix
 }
 
+TEST(test_fill_complex){
+  Matrix *mat = new Matrix;
+  const int width = 1;
+  const int height = 100;
+  const int value = -1;
+  Matrix_init(mat, width, height);
+  Matrix_fill(mat, value);
+
+  for(int r = 0; r < height; ++r){
+    for(int c = 0; c < width; ++c){
+      ASSERT_EQUAL(*Matrix_at(mat, r, c), value);
+    }
+  }
+
+  delete mat;
+
+}
+
+TEST(test_fill_one){
+  Matrix *mat = new Matrix;
+  const int width = 1;
+  const int height = 1;
+  const int value = 1;
+  Matrix_init(mat, width, height);
+  Matrix_fill(mat, value);
+
+  for(int r = 0; r < height; ++r){
+    for(int c = 0; c < width; ++c){
+      ASSERT_EQUAL(*Matrix_at(mat, r, c), value);
+    }
+  }
+
+  delete mat;
+
+}
+
+
 
 
 // ADD YOUR TESTS HERE
@@ -42,8 +79,8 @@ TEST(test_matrix_dimensions) {
   Matrix *mat = new Matrix;
   Matrix_init(mat, 5, 10);
 
-  ASSERT_EQUAL(mat->width, 5);
-  ASSERT_EQUAL(mat->height, 10);
+  ASSERT_EQUAL(Matrix_width(mat), 5);
+  ASSERT_EQUAL(Matrix_height(mat), 10);
 
   delete mat;
 
@@ -130,6 +167,9 @@ TEST(test_matrix_rowValues){
 
   //testing middle row, min in middle index--all same
   ASSERT_EQUAL(Matrix_min_value_in_row(mat, 3, 1, 4), 10);
+
+  //testing max
+  ASSERT_EQUAL(Matrix_max(mat), 10);
 
   
 
