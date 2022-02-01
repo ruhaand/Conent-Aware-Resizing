@@ -90,7 +90,7 @@ static int squared_difference(Pixel p1, Pixel p2) {
 //           See the project spec for details on computing the energy matrix.
 void compute_energy_matrix(const Image* img, Matrix* energy) {
   //initialize and fill matrix
-  Matrix_init(energy, img->width, img->height);
+  Matrix_init(energy, Image_width(img), Image_height(img));
   Matrix_fill(energy, 0);
 
 
