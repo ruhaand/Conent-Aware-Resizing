@@ -110,10 +110,6 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
 
       *Matrix_at(energy, row, col) = sqDiffNS + sqDiffEW;
 
-      delete &north;
-      delete &south;
-      delete &east;
-      delete &west;
     }
   }
 
@@ -136,7 +132,37 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
 void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
-  assert(false); // TODO Replace with your implementation!
+  //initialize cost matrix
+  Matrix_init(cost, Matrix_height(energy), Matrix_width(energy));
+
+  //fill first row with energy values
+  for(int row = 0; row < 1 ; row++){
+    for(int col = 1; col < Matrix_width(cost); col++){
+      *Matrix_at(cost, row, col) = *Matrix_at(energy, row, col);
+    }
+  }
+
+  //fill in all the other rows using cost equation
+  for(int row = 1; row < Matrix_height(cost) ; row++){
+    for(int col = 0; col < Matrix_width(cost); col++){
+      //if index is first, look at the enegry above it and to the right
+      if(col == 0){
+          int energy = *Matrix_at(cost, row, col);
+          int minEnergy = Matrix_min_value_in_row(cost, row, col, col + 1);
+          *Matrix_at(cost, row, col) = energy + minEnergy;
+      } else if(col == Matrix_width(cost)){
+          int energy = *Matrix_at(cost, row, col);
+          int minEnergy = Matrix_min_value_in_row(cost, row, col, col - 1);
+          *Matrix_at(cost, row, col) = energy + minEnergy;
+      } else {
+          //now we know that indexs are not borders
+          //need to use all three variables (N, NW, NE)
+          int energy = *Matrix_at(cost, row, col);
+          int minEnergy = Matrix_min_value_in_row(cost, row, col - 1, col + 1);
+          *Matrix_at(cost, row, col) = energy + minEnergy;
+      }
+    }
+  }
 }
 
 
@@ -156,7 +182,18 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
 //           with the bottom of the image and proceeding to the top,
 //           as described in the project spec.
 void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
-  assert(false); // TODO Replace with your implementation!
+  //starting at the bottom of the matrix
+  int colStart = Matrix_height(cost) - 1;
+  int minCol = Matrix_column_of_min_value_in_row(cost, Matrix_height(cost) - 1, colStart, 0);
+  
+  //start at second to last row
+  //TAKE A SECOND LOOK AT THIS ONE--MAKE SURE THAT YOU DONT GET AN OUT OF BOUNDS ERROR--DRAW IT OUT
+  for(int row = Matrix_height(cost) - 2; row >= 0; row++){
+    //starting at the bottom of the matrix
+    minCol = Matrix_column_of_min_value_in_row(cost, row, minCol - 1, minCol + 1);
+    //this will access each index of seam array
+    *(seam+row) = minCol;
+  }
 }
 
 
