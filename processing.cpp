@@ -239,8 +239,10 @@ void remove_vertical_seam(Image *img, const int seam[]) {
 //           then use delete when you are done with them.
 void seam_carve_width(Image *img, int newWidth) {
   //initialize objects
-  Matrix* energy;
-  Matrix* cost;
+  Matrix* energy = new Matrix;
+  Matrix* cost = new Matrix;
+  Matrix_init(cost, Matrix_width(energy), Matrix_height(energy));
+
   int seam[MAX_MATRIX_HEIGHT];
   
   //need to loop repeatedly
