@@ -88,7 +88,8 @@ int Matrix_column(const Matrix* mat, const int* ptr) {
 // EFFECTS:  Returns a pointer to the element in the Matrix
 //           at the given row and column.
 int* Matrix_at(Matrix* mat, int row, int column) {
-  // assert(false); // TODO Replace with your implementation!
+  assert(0 <= row && row < Matrix_height(mat));
+  assert(0 <= column && column < Matrix_width(mat));
   int index = 0;
   int numCols = mat->width;
   

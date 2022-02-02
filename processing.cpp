@@ -133,11 +133,11 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
 //           See the project spec for details on computing the cost matrix.
 void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
   //initialize cost matrix
-  Matrix_init(cost, Matrix_height(energy), Matrix_width(energy));
+  Matrix_init(cost, Matrix_width(energy), Matrix_height(energy));
 
   //fill first row with energy values
   for(int row = 0; row < 1 ; row++){
-    for(int col = 1; col < Matrix_width(cost); col++){
+    for(int col = 0; col < Matrix_width(cost); col++){
       *Matrix_at(cost, row, col) = *Matrix_at(energy, row, col);
     }
   }
@@ -147,19 +147,21 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
     for(int col = 0; col < Matrix_width(cost); col++){
       //if index is first, look at the enegry above it and to the right
       if(col == 0){
-          int energy = *Matrix_at(cost, row, col);
-          int minEnergy = Matrix_min_value_in_row(cost, row, col, col + 1);
-          *Matrix_at(cost, row, col) = energy + minEnergy;
-      } else if(col == Matrix_width(cost)){
-          int energy = *Matrix_at(cost, row, col);
-          int minEnergy = Matrix_min_value_in_row(cost, row, col, col - 1);
-          *Matrix_at(cost, row, col) = energy + minEnergy;
+          int energyVal = *Matrix_at(energy, row, col);
+          int minCost = Matrix_min_value_in_row(cost, row - 1, col, col + 2);
+          int value = energyVal + minCost;
+          *Matrix_at(cost, row, col) = value;
+      } else if(col == Matrix_width(cost) - 1){
+          int energyVal = *Matrix_at(energy, row, col);
+          int minCost = Matrix_min_value_in_row(cost, row - 1, col - 1, col + 1);
+          int value = energyVal + minCost;
+          *Matrix_at(cost, row, col) = value;
       } else {
           //now we know that indexs are not borders
           //need to use all three variables (N, NW, NE)
-          int energy = *Matrix_at(cost, row, col);
-          int minEnergy = Matrix_min_value_in_row(cost, row, col - 1, col + 1);
-          *Matrix_at(cost, row, col) = energy + minEnergy;
+          int energyVal = *Matrix_at(energy, row, col);
+          int minCost = Matrix_min_value_in_row(cost, row - 1, col - 1, col + 2);
+          *Matrix_at(cost, row, col) = energyVal + minCost;
       }
     }
   }
@@ -184,16 +186,22 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
 void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
   //starting at the bottom of the matrix
   int rowStart = Matrix_height(cost) - 1;
-  int colEnd = Matrix_width(cost) - 1;
+  int colEnd = Matrix_width(cost);
   //find the minCol in the last row
   int minCol = Matrix_column_of_min_value_in_row(cost, rowStart, 0, colEnd);
   //put the minCol in the last element of seam array
   *(seam+rowStart) = minCol;
   
   //start at second to last row, go all the way to top row
-  for(int row = rowStart - 1; row >= 0; row++){
+  for(int row = rowStart - 1; row >= 0; row--){
     //starting at the bottom of the matrix
-    minCol = Matrix_column_of_min_value_in_row(cost, row, minCol - 1, minCol + 1);
+    if(minCol == 0){
+      minCol = Matrix_column_of_min_value_in_row(cost, row, minCol, minCol + 2);
+    } else if(minCol == Matrix_width(cost) - 1){
+      minCol = Matrix_column_of_min_value_in_row(cost, row, minCol - 1, minCol + 1);
+    } else {
+      minCol = Matrix_column_of_min_value_in_row(cost, row, minCol - 1, minCol + 2);
+    }
     //this will access each index of seam array
     *(seam+row) = minCol;
   }
@@ -214,16 +222,21 @@ void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
 //           and then use delete when you are done with it.
 void remove_vertical_seam(Image *img, const int seam[]) {
   Image* imgCopy = new Image;
+  Image_init(imgCopy, Image_width(img) - 1, Image_height(img));
   for(int row = 0; row < Image_height(img); row++){
     for(int col = 0; col < Image_width(img); col++){
-      if(col == seam[row]){
-        //do nothing
-        //by doing nothing, we will skip over this pixel
-      } else {
+      if(col < seam[row]){
         Image_set_pixel(imgCopy, row, col, Image_get_pixel(img, row, col));
+      } else if(col == seam[row]){
+        //do nothing
+      } else {
+        Image_set_pixel(imgCopy, row, col - 1, Image_get_pixel(img, row, col));
+      }
+        
       }
     }
-  }
+
+  *img = *imgCopy;
 
   delete imgCopy;
 }
