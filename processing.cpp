@@ -266,6 +266,10 @@ void seam_carve_width(Image *img, int newWidth) {
     find_minimal_vertical_seam(cost, seam);
     remove_vertical_seam(img, seam);
   }
+  delete energy;
+  delete cost;
+
+
 }
 
 // REQUIRES: img points to a valid Image
